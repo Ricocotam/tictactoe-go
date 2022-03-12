@@ -19,6 +19,9 @@ func main() {
 		fmt.Scanf("%d %d", &x, &y)
 		move = tictactoe.NewPos(x, y)
 		game.Play(move)
+		if game.Err != nil {
+			fmt.Println(game.Err)
+		}
 		fmt.Println(game)
 	}
 

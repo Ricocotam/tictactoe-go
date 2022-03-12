@@ -5,25 +5,41 @@ import (
 )
 
 func TestCheckMoveNegative(t *testing.T) {
+	game := new(Game)
 	move := new(Pos)
 	move.x = -1
 	move.y = -1
 
-	checkMove(move)
+	checkMove(move, game)
 	if move.isValid {
 		t.Errorf("CheckMove should return false and an error and not %t", move.isValid)
 	}
 }
 
 func TestCheckMoveTooBig(t *testing.T) {
+	game := new(Game)
 	move := new(Pos)
 	move.x = 4
 	move.y = 4
 
-	checkMove(move)
+	checkMove(move, game)
 
 	if move.isValid {
 		t.Errorf("CheckMove should return false and an error and not %t", move.isValid)
+	}
+}
+
+func TestCheckMoveAlreadyPlayed(t *testing.T) {
+	p1 := Player("Toto")
+	p2 := Player("Tata")
+	game := NewGame(p1, p2)
+	move := NewPos(0, 0)
+	game.Play(move)
+
+	move = NewPos(0, 0)
+	checkMove(move, game)
+	if move.isValid {
+		t.Errorf("CheckMove should return an error and not %t", move.isValid)
 	}
 }
 

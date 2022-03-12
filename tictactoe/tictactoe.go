@@ -2,7 +2,6 @@ package tictactoe
 
 import (
 	"errors"
-	"fmt"
 )
 
 type Grid [3][3]string
@@ -21,20 +20,28 @@ type Game struct {
 	CurrentPlayer int
 	signs         [2]string
 	finished      bool
-	err           error
+	Err           error
 }
 
 func Play(move Pos, game *Game, player Player) {
-	checkMove(&move)
+	checkMove(&move, game)
 	game.Play(&move)
 }
 
-func checkMove(move *Pos) {
+func checkMove(move *Pos, game *Game) {
 	if move.x < 0 || move.y < 0 {
 		move.isValid = false
+		return
 	}
+
 	if move.x > 3 || move.y > 3 {
 		move.isValid = false
+		return
+	}
+
+	if game.board[move.x][move.y] != "" {
+		move.isValid = false
+		return
 	}
 }
 
@@ -56,8 +63,9 @@ func (game *Game) IsFinished() bool {
 }
 
 func (game *Game) Play(move *Pos) {
+	checkMove(move, game)
 	if !move.isValid {
-		game.err = errors.New("proposed move is invalid")
+		game.Err = errors.New("proposed move is invalid")
 		return
 	}
 
@@ -166,5 +174,23 @@ func (board *Grid) checkDiagonals() (won bool) {
 }
 
 func (game *Game) String() string {
-	return fmt.Sprintf("%s", game.board)
+	return game.board.String()
+}
+
+func (board *Grid) String() string {
+	ret := "-------\n"
+	for i := 0; i < 3; i++ {
+		ret += "|"
+		for j := 0; j < 3; j++ {
+			if board[i][j] == "" {
+				ret += " |"
+			} else {
+				ret += board[i][j] + "|"
+			}
+		}
+		ret += "\n"
+		ret += "-------\n"
+	}
+
+	return ret
 }
